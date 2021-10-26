@@ -12,22 +12,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
-        binding.button.setOnClickListener(submitOrder(binding));
-        binding.price.text = NumberFormat.getCurrencyInstance().format(0.00);
+        binding.btnplus.setOnClickListener(increment(binding));
+        binding.btnminus.setOnClickListener(decrement(binding));
+        binding.price.text = NumberFormat.getCurrencyInstance().format(5.00);
 
     }
 
-    fun submitOrder(binding: ActivityMainBinding): View.OnClickListener? {
+    private fun increment(binding: ActivityMainBinding): View.OnClickListener? {
         return View.OnClickListener {
-            binding.quantityEditText.text = "5";
-            displayPrice(binding);
-        };
-    };
-
-    fun displayPrice(binding: ActivityMainBinding) {
-        binding.price.text = NumberFormat.getCurrencyInstance()
-            .format(Integer.parseInt(binding.quantityEditText.text.toString()));
+            binding.quantityEditText.text =
+                "${Integer.parseInt(binding.quantityEditText.text.toString()).inc()}";
+        }
     }
+
+    private fun decrement(binding: ActivityMainBinding): View.OnClickListener? {
+        return View.OnClickListener {
+            binding.quantityEditText.text =
+                "${Integer.parseInt(binding.quantityEditText.text.toString()).dec()}";
+        }
+    }
+
 }
 
 
