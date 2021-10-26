@@ -22,14 +22,23 @@ class MainActivity : AppCompatActivity() {
         return View.OnClickListener {
             binding.quantityEditText.text =
                 "${Integer.parseInt(binding.quantityEditText.text.toString()).inc()}";
+            totalizador(binding);
         }
     }
 
     private fun decrement(binding: ActivityMainBinding): View.OnClickListener? {
         return View.OnClickListener {
-            binding.quantityEditText.text =
-                "${Integer.parseInt(binding.quantityEditText.text.toString()).dec()}";
+            if (Integer.parseInt(binding.quantityEditText.text.toString()) > 0) {
+                binding.quantityEditText.text =
+                    "${Integer.parseInt(binding.quantityEditText.text.toString()).dec()}";
+                totalizador(binding);
+            }
         }
+    }
+
+    private fun totalizador(binding: ActivityMainBinding) {
+        binding.price.text = NumberFormat.getCurrencyInstance()
+            .format(5.00 * Integer.parseInt(binding.quantityEditText.text.toString()));
     }
 
 }
