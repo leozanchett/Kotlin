@@ -30,7 +30,7 @@
         android:layout_marginRight="24dp"
         android:backgroundTint="@color/buttonBackground"
         android:text="@string/random_button_text"
-        app:backgroundTint=""
+        app:backgroundTint="@color/screenBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_first" />
@@ -42,7 +42,7 @@
         android:layout_marginLeft="24dp"
         android:backgroundTint="@color/buttonBackground"
         android:text="@string/toast_button_text"
-        app:backgroundTint=""
+        app:backgroundTint="@color/screenBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_first" />
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonBackground"
         android:text="@string/count_buttom"
-        app:backgroundTint=""
+        app:backgroundTint="@color/screenBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/random_button"
         app:layout_constraintStart_toEndOf="@id/toast_button"
