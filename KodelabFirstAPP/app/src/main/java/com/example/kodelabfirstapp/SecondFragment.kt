@@ -1,12 +1,12 @@
 package com.example.kodelabfirstapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 
@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
  */
 class SecondFragment : Fragment() {
     val args: SecondFragmentArgs by navArgs()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,8 +31,12 @@ class SecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.button_second).setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+            val valorRandom = view.findViewById<TextView>(R.id.textview_random).text.toString().toString().toInt() + 10;
+            val action = SecondFragmentDirections.actionSecondFragmentToFirstFragment(valorRandom.toString());
+            findNavController().navigate(action);
+            //findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
+
         val count = args.myArg
         val countText = getString(R.string.random_heading, count)
         view.findViewById<TextView>(R.id.textview_header).text = countText
