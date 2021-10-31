@@ -18,6 +18,10 @@
             android:name="randomDaSecond"
             android:defaultValue=""
             app:argType="string" />
+        <argument
+            android:name="tentativa_first"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -30,6 +34,10 @@
             app:destination="@id/FirstFragment" />
         <argument
             android:name="myArg"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="tentativa_second"
             android:defaultValue="0"
             app:argType="integer" />
     </fragment>

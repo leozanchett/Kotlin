@@ -12,4 +12,5 @@
     <string name="toast_button_text">Toast</string>
     <string name="count_buttom">Count</string>
     <string name="helloW">Hello World !</string>
+    <string name="text_tentativas">Tentativas %d</string>
 </resources>

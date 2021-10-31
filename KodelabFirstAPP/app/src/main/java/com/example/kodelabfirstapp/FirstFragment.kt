@@ -15,7 +15,7 @@ import androidx.navigation.fragment.navArgs
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class FirstFragment : Fragment() {
-    val args: FirstFragmentArgs by navArgs();
+    private val args: FirstFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,14 +28,15 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(args.randomDaSecond.isNotEmpty()) {
-            view.findViewById<TextView>(R.id.textview_first).text = args.randomDaSecond;
-        }
-
         view.findViewById<Button>(R.id.random_button).setOnClickListener {
             val showCountTextView = view.findViewById<TextView>(R.id.textview_first)
             val currentCount = showCountTextView.text.toString().toInt()
-            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(currentCount)
+            val tentatives = view.findViewById<TextView>(R.id.textView_tentativas).text.toString()
+                .filter { it.isDigit() }.toInt()
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(
+                currentCount,
+                tentatives
+            )
             findNavController().navigate(action)
         }
 
@@ -47,10 +48,34 @@ class FirstFragment : Fragment() {
         view.findViewById<Button>(R.id.count_button).setOnClickListener {
             countMe(view)
         }
+
+        displayTentatives(view)
+    }
+
+    private fun displayTentatives(view: View) {
+        if (args.randomDaSecond.isNotEmpty()) {
+            view.findViewById<TextView>(R.id.textview_first).text = args.randomDaSecond
+            view.findViewById<TextView>(R.id.textView_tentativas).text =
+                getString(R.string.text_tentativas, args.tentativaFirst.toString().toInt())
+            if (args.randomDaSecond.toString().toInt() > 50) {
+                TestDone(view)
+            }
+        } else {
+            view.findViewById<TextView>(R.id.textView_tentativas).text =
+                getString(R.string.text_tentativas, 0)
+        }
+    }
+
+    private fun TestDone(view: View) {
+        view.findViewById<Button>(R.id.random_button).isEnabled = false;
+        view.findViewById<Button>(R.id.count_button).isEnabled = false;
+        val myToast = Toast.makeText(context, "Teste concluído !", Toast.LENGTH_LONG)
+        myToast.show()
     }
 
     private fun countMe(view: View) {
         val showCountTextView = view.findViewById<TextView>(R.id.textview_first)
         showCountTextView.text = showCountTextView.text.toString().toInt().inc().toString()
     }
+
 }
