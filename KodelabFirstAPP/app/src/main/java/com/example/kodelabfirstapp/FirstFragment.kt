@@ -58,7 +58,7 @@ class FirstFragment : Fragment() {
             view.findViewById<TextView>(R.id.textView_tentativas).text =
                 getString(R.string.text_tentativas, args.tentativaFirst.toString().toInt())
             if (args.randomDaSecond.toString().toInt() > 50) {
-                TestDone(view)
+                testDone(view, true)
             }
         } else {
             view.findViewById<TextView>(R.id.textView_tentativas).text =
@@ -66,10 +66,15 @@ class FirstFragment : Fragment() {
         }
     }
 
-    private fun TestDone(view: View) {
-        view.findViewById<Button>(R.id.random_button).isEnabled = false;
-        view.findViewById<Button>(R.id.count_button).isEnabled = false;
-        val myToast = Toast.makeText(context, "Teste concluído !", Toast.LENGTH_LONG)
+    fun testDone(view: View, enables: Boolean) {
+        view.findViewById<Button>(R.id.random_button).isEnabled = enables;
+        view.findViewById<Button>(R.id.count_button).isEnabled = enables;
+        val myToast: Toast
+        if(enables){
+            myToast = Toast.makeText(context, "Teste concluído !", Toast.LENGTH_LONG)
+        }else{
+            myToast = Toast.makeText(context, "Teste reiniciado !", Toast.LENGTH_LONG)
+        }
         myToast.show()
     }
 
