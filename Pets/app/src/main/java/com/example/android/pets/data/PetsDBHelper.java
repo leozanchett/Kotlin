@@ -1,9 +1,7 @@
 package com.example.android.pets.data;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.Nullable;
 
 import com.example.android.pets.CatalogActivity;
 import com.example.android.pets.data.PetsContract.PetsEntry;
