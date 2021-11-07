@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.android.pets.CatalogActivity;
+import com.example.android.pets.EditorActivity;
 import com.example.android.pets.data.PetsContract.PetsEntry;
 
 public class PetsDBHelper extends SQLiteOpenHelper {
@@ -18,6 +19,7 @@ public class PetsDBHelper extends SQLiteOpenHelper {
      */
     private static final int DATABASE_VERSION = 1;
 
+
     private final static String TABLE_PETS_CREATE = "CREATE TABLE "+ PetsEntry.TABLE_NAME+" ( " +
                 PetsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "+
                 PetsEntry.COLUMN_PET_NAME + " TEXT NOT NULL, "+
@@ -27,6 +29,11 @@ public class PetsDBHelper extends SQLiteOpenHelper {
 
 
     public PetsDBHelper(CatalogActivity context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+    }
+
+    public PetsDBHelper(EditorActivity context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
     }

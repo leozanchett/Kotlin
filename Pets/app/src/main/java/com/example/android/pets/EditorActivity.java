@@ -15,6 +15,8 @@
  */
 package com.example.android.pets;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +29,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.example.android.pets.data.PetsContract;
 import com.example.android.pets.data.PetsContract.PetsEntry;
+import com.example.android.pets.data.PetsDBHelper;
 
 /**
  * Allows user to create a new pet or edit an existing one.
@@ -52,17 +56,18 @@ public class EditorActivity extends AppCompatActivity {
      */
     private int mGender = 0;
 
+    private PetsDBHelper mDbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
-
         // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.edit_pet_name);
         mBreedEditText = (EditText) findViewById(R.id.edit_pet_breed);
         mWeightEditText = (EditText) findViewById(R.id.edit_pet_weight);
         mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
-
+        mDbHelper = new PetsDBHelper(this);
         setupSpinner();
     }
 
@@ -132,5 +137,15 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void insertPet(){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(PetsContract.PetsEntry.COLUMN_PET_NAME, mNameEditText.getText().toString());
+        values.put(PetsContract.PetsEntry.COLUMN_PET_BREED, mBreedEditText.getText().toString());
+        values.put(PetsContract.PetsEntry.COLUMN_PET_WEIGTH, Integer.valueOf(mWeightEditText.getText().toString()));
+        values.put(PetsContract.PetsEntry.COLUMN_PET_GENDER, mGenderSpinner.getBaseline());
+        db.insert(PetsEntry.TABLE_NAME, null, values);
     }
 }
