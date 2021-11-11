@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.android.pets.data.PetsContract;
 import com.example.android.pets.data.PetsContract.PetsEntry;
@@ -124,7 +125,8 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Do nothing for now
+                insertPet();
+                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -142,10 +144,16 @@ public class EditorActivity extends AppCompatActivity {
     private void insertPet(){
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(PetsContract.PetsEntry.COLUMN_PET_NAME, mNameEditText.getText().toString());
-        values.put(PetsContract.PetsEntry.COLUMN_PET_BREED, mBreedEditText.getText().toString());
-        values.put(PetsContract.PetsEntry.COLUMN_PET_WEIGTH, Integer.valueOf(mWeightEditText.getText().toString()));
+        values.put(PetsContract.PetsEntry.COLUMN_PET_NAME, mNameEditText.getText().toString().trim());
+        values.put(PetsContract.PetsEntry.COLUMN_PET_BREED, mBreedEditText.getText().toString().trim());
+        values.put(PetsContract.PetsEntry.COLUMN_PET_WEIGTH, Integer.valueOf(mWeightEditText.getText().toString().trim()));
         values.put(PetsContract.PetsEntry.COLUMN_PET_GENDER, mGenderSpinner.getBaseline());
-        db.insert(PetsEntry.TABLE_NAME, null, values);
+        long newId = db.insert(PetsEntry.TABLE_NAME, null, values);
+        if(newId > 0){
+            Toast.makeText(this, mNameEditText.getText().toString().trim() +" cadastrado com o id " +newId, Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(this, "Houve um problema no cadastro do pet "+ mNameEditText.getText().toString().trim(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
