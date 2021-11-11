@@ -54,7 +54,21 @@ public class CatalogActivity extends AppCompatActivity {
 
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
-        Cursor cursor = db.rawQuery("SELECT * FROM " + PetsContract.PetsEntry.TABLE_NAME, null);
+        String[] colunas = new String[]{PetsContract.PetsEntry.COLUMN_PET_NAME, PetsContract.PetsEntry.COLUMN_PET_BREED};
+        String where = PetsContract.PetsEntry.COLUMN_PET_GENDER + "=?";
+        String[] argsWhere = new String[]{String.valueOf(PetsContract.PetsEntry.GENDER_PET_FEMALE)};
+        String orderBy = PetsContract.PetsEntry._ID + " DESC";
+        Cursor cursor = db.query(
+                PetsContract.PetsEntry.TABLE_NAME,
+                colunas,
+                null,
+                null,
+                null,
+                null,
+                orderBy,
+                null
+                );
+
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
