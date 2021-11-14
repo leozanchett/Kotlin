@@ -1,16 +1,17 @@
 package com.example.android.pets;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.example.android.pets.data.PetsContract;
@@ -30,12 +31,9 @@ public class CatalogActivity extends AppCompatActivity {
         mDbHelper = new PetsDBHelper(this);
         // Setup FAB to open EditorActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
-                startActivity(intent);
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+            startActivity(intent);
         });
 
         displayDatabaseInfo();
@@ -45,6 +43,7 @@ public class CatalogActivity extends AppCompatActivity {
      * Temporary helper method to display information in the onscreen TextView about the state of
      * the pets database.
      */
+    @SuppressLint("SetTextI18n")
     private void displayDatabaseInfo() {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity
@@ -61,10 +60,10 @@ public class CatalogActivity extends AppCompatActivity {
                 PetsContract.PetsEntry.COLUMN_PET_WEIGTH,
                 PetsContract.PetsEntry.COLUMN_PET_GENDER,
         };
-        String where = PetsContract.PetsEntry.COLUMN_PET_GENDER + "=?";
-        String[] argsWhere = new String[]{String.valueOf(PetsContract.PetsEntry.GENDER_PET_FEMALE)};
         //String orderBy = PetsContract.PetsEntry._ID + " DESC";
-        Cursor cursor = db.query(
+        //orderBy,
+
+        try (Cursor cursor = db.query(
                 PetsContract.PetsEntry.TABLE_NAME,
                 colunas,
                 null,
@@ -73,27 +72,23 @@ public class CatalogActivity extends AppCompatActivity {
                 null,
                 null, //orderBy,
                 null
-                );
-
-        try {
+        )) {
             TextView displayView = (TextView) findViewById(R.id.text_view_pet);
             displayView.setText("Pets cadastrados: " + cursor.getCount());
-            String colunasDoArray = "";
-            for (String val: colunas){
-                colunasDoArray = colunasDoArray + val + " - ";
+            StringBuilder colunasDoArray = new StringBuilder();
+            for (String val : colunas) {
+                colunasDoArray.append(val).append(" - ");
             }
             displayView.append("\n" + colunasDoArray);
-            while (cursor.moveToNext()){
-                displayView.append(("\n" +  getString(cursor)));
+            while (cursor.moveToNext()) {
+                displayView.append(("\n" + getCursorString(cursor)));
             }
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
         }
+        // Always close the cursor when you're done reading from it. This releases all its
+        // resources and makes it invalid.
     }
 
-    private String getString(Cursor cursor) {
+    private String getCursorString(@NonNull Cursor cursor) {
         return cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry._ID)) + '-' +
                 cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_NAME)) + '-' +
                 cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_BREED)) + '-' +
