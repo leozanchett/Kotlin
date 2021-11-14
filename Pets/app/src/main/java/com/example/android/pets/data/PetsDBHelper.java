@@ -1,5 +1,6 @@
 package com.example.android.pets.data;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -36,6 +37,10 @@ public class PetsDBHelper extends SQLiteOpenHelper {
     public PetsDBHelper(EditorActivity context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
+    }
+
+    public PetsDBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
