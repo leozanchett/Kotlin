@@ -54,10 +54,16 @@ public class CatalogActivity extends AppCompatActivity {
 
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
-        String[] colunas = new String[]{PetsContract.PetsEntry.COLUMN_PET_NAME, PetsContract.PetsEntry.COLUMN_PET_BREED};
+        String[] colunas = new String[]{
+                PetsContract.PetsEntry._ID,
+                PetsContract.PetsEntry.COLUMN_PET_NAME,
+                PetsContract.PetsEntry.COLUMN_PET_BREED,
+                PetsContract.PetsEntry.COLUMN_PET_WEIGTH,
+                PetsContract.PetsEntry.COLUMN_PET_GENDER,
+        };
         String where = PetsContract.PetsEntry.COLUMN_PET_GENDER + "=?";
         String[] argsWhere = new String[]{String.valueOf(PetsContract.PetsEntry.GENDER_PET_FEMALE)};
-        String orderBy = PetsContract.PetsEntry._ID + " DESC";
+        //String orderBy = PetsContract.PetsEntry._ID + " DESC";
         Cursor cursor = db.query(
                 PetsContract.PetsEntry.TABLE_NAME,
                 colunas,
@@ -65,20 +71,34 @@ public class CatalogActivity extends AppCompatActivity {
                 null,
                 null,
                 null,
-                orderBy,
+                null, //orderBy,
                 null
                 );
 
         try {
-            // Display the number of rows in the Cursor (which reflects the number of rows in the
-            // pets table in the database).
             TextView displayView = (TextView) findViewById(R.id.text_view_pet);
-            displayView.setText("Number of rows in pets database table: " + cursor.getCount());
+            displayView.setText("Pets cadastrados: " + cursor.getCount());
+            String colunasDoArray = "";
+            for (String val: colunas){
+                colunasDoArray = colunasDoArray + val + " - ";
+            }
+            displayView.append("\n" + colunasDoArray);
+            while (cursor.moveToNext()){
+                displayView.append(("\n" +  getString(cursor)));
+            }
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
             // resources and makes it invalid.
             cursor.close();
         }
+    }
+
+    private String getString(Cursor cursor) {
+        return cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry._ID)) + '-' +
+                cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_NAME)) + '-' +
+                cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_BREED)) + '-' +
+                cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_WEIGTH)) + '-' +
+                cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_GENDER));
     }
 
     @Override
