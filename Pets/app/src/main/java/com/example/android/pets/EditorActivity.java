@@ -15,8 +15,9 @@
  */
 package com.example.android.pets;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -39,16 +40,24 @@ import com.example.android.pets.data.PetsDBHelper;
  */
 public class EditorActivity extends AppCompatActivity {
 
-    /** EditText field to enter the pet's name */
+    /**
+     * EditText field to enter the pet's name
+     */
     private EditText mNameEditText;
 
-    /** EditText field to enter the pet's breed */
+    /**
+     * EditText field to enter the pet's breed
+     */
     private EditText mBreedEditText;
 
-    /** EditText field to enter the pet's weight */
+    /**
+     * EditText field to enter the pet's weight
+     */
     private EditText mWeightEditText;
 
-    /** EditText field to enter the pet's gender */
+    /**
+     * EditText field to enter the pet's gender
+     */
     private Spinner mGenderSpinner;
 
     /**
@@ -106,7 +115,7 @@ public class EditorActivity extends AppCompatActivity {
             // Because AdapterView is an abstract class, onNothingSelected must be defined
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mGender =  PetsEntry.GENDER_PET_UNKNOWN;
+                mGender = PetsEntry.GENDER_PET_UNKNOWN;
             }
         });
     }
@@ -141,18 +150,18 @@ public class EditorActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void insertPet(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+    private void insertPet() {
         ContentValues values = new ContentValues();
         values.put(PetsContract.PetsEntry.COLUMN_PET_NAME, mNameEditText.getText().toString().trim());
         values.put(PetsContract.PetsEntry.COLUMN_PET_BREED, mBreedEditText.getText().toString().trim());
         values.put(PetsContract.PetsEntry.COLUMN_PET_WEIGTH, Integer.valueOf(mWeightEditText.getText().toString().trim()));
-        values.put(PetsContract.PetsEntry.COLUMN_PET_GENDER, mGenderSpinner.getBaseline());
-        long newId = db.insert(PetsEntry.TABLE_NAME, null, values);
-        if(newId > 0){
-            Toast.makeText(this, mNameEditText.getText().toString().trim() +" cadastrado com o id " +newId, Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(this, "Houve um problema no cadastro do pet "+ mNameEditText.getText().toString().trim(), Toast.LENGTH_SHORT).show();
+        values.put(PetsContract.PetsEntry.COLUMN_PET_GENDER, mGenderSpinner.getItemAtPosition(mGenderSpinner.getSelectedItemPosition()).toString());
+        Uri uri = getContentResolver().insert(PetsContract.PetsUri.CONTENT_URI, values);
+        final long idPetCadastrado = ContentUris.parseId(uri);
+        if (idPetCadastrado > 0) {
+            Toast.makeText(this, mNameEditText.getText().toString().trim() + " cadastrado com o id " + idPetCadastrado, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Houve um problema no cadastro do pet " + mNameEditText.getText().toString().trim(), Toast.LENGTH_SHORT).show();
         }
 
     }

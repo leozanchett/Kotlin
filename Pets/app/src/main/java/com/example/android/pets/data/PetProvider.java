@@ -12,7 +12,9 @@ import android.support.annotation.Nullable;
 
 public class PetProvider extends ContentProvider {
 
-    /** Tag for the log messages */
+    /**
+     * Tag for the log messages
+     */
     public static final String LOG_TAG = PetProvider.class.getSimpleName();
 
     private PetsDBHelper mDbHelper;
@@ -20,9 +22,10 @@ public class PetProvider extends ContentProvider {
     private static final int PETS = 100;
     private static final int PET_ID = 101;
     public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
     static {
-        sUriMatcher.addURI(PetsContract.PetsUri.CONTENT_AUTHORITY, PetsContract.PetsUri.PATH_PETS,  PETS);
-        sUriMatcher.addURI(PetsContract.PetsUri.CONTENT_AUTHORITY, PetsContract.PetsUri.PATH_PETS + "/#",  PET_ID);
+        sUriMatcher.addURI(PetsContract.PetsUri.CONTENT_AUTHORITY, PetsContract.PetsUri.PATH_PETS, PETS);
+        sUriMatcher.addURI(PetsContract.PetsUri.CONTENT_AUTHORITY, PetsContract.PetsUri.PATH_PETS + "/#", PET_ID);
     }
 
     @Override
@@ -43,13 +46,13 @@ public class PetProvider extends ContentProvider {
                 break;
             case PET_ID:
                 selection = PetsContract.PetsEntry._ID + "=?";
-                selectionArgs = new String[]{ String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 cursor = database.query(PetsContract.PetsEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
-        return null;
+        return cursor;
     }
 
     @Nullable
@@ -61,7 +64,18 @@ public class PetProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        if (match == PETS) {
+            return InsertPet(contentValues, uri);
+        } else {
+            throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
+    }
+
+    private Uri InsertPet(ContentValues contentValues, Uri uri) {
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+        long newId = database.insert(PetsContract.PetsEntry.TABLE_NAME, null, contentValues);
+        return ContentUris.withAppendedId(uri, newId);
     }
 
     @Override

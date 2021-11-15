@@ -1,6 +1,5 @@
 package com.example.android.pets.data;
 
-import android.content.UriMatcher;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
