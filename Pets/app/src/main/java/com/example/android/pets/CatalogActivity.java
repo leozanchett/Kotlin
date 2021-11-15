@@ -45,47 +45,37 @@ public class CatalogActivity extends AppCompatActivity {
      */
     @SuppressLint("SetTextI18n")
     private void displayDatabaseInfo() {
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // Perform this raw SQL query "SELECT * FROM pets"
-        // to get a Cursor that contains all rows from the pets table.
-        String[] colunas = new String[]{
+        String[] projection = new String[]{
                 PetsContract.PetsEntry._ID,
                 PetsContract.PetsEntry.COLUMN_PET_NAME,
                 PetsContract.PetsEntry.COLUMN_PET_BREED,
                 PetsContract.PetsEntry.COLUMN_PET_WEIGTH,
                 PetsContract.PetsEntry.COLUMN_PET_GENDER,
         };
-        //String orderBy = PetsContract.PetsEntry._ID + " DESC";
-        //orderBy,
 
-        try (Cursor cursor = db.query(
-                PetsContract.PetsEntry.TABLE_NAME,
-                colunas,
+        try (Cursor cursor = getContentResolver().query(
+                PetsContract.PetsUri.CONTENT_URI,
+                projection,
                 null,
                 null,
-                null,
-                null,
-                null, //orderBy,
                 null
         )) {
             TextView displayView = (TextView) findViewById(R.id.text_view_pet);
-            displayView.setText("Pets cadastrados: " + cursor.getCount());
-            StringBuilder colunasDoArray = new StringBuilder();
-            for (String val : colunas) {
-                colunasDoArray.append(val).append(" - ");
-            }
-            displayView.append("\n" + colunasDoArray);
-            while (cursor.moveToNext()) {
-                displayView.append(("\n" + getCursorString(cursor)));
+            if (cursor != null) {
+                displayView.setText("Pets cadastrados: " + cursor.getCount());
+                StringBuilder colunasDoArray = new StringBuilder();
+                for (String val : projection) {
+                    colunasDoArray.append(val).append(" - ");
+                }
+                displayView.append("\n" + colunasDoArray);
+                while (cursor.moveToNext()) {
+                    displayView.append(("\n" + getCursorString(cursor)));
+                }
+            } else {
+                displayView.setText("Nenhum pet cadastrado");
             }
         }
-        // Always close the cursor when you're done reading from it. This releases all its
-        // resources and makes it invalid.
     }
 
     private String getCursorString(@NonNull Cursor cursor) {
