@@ -79,9 +79,10 @@ public class PetProvider extends ContentProvider {
         return ContentUris.withAppendedId(uri, newId);
     }
 
-    private void VerifyValues(ContentValues contentValues) {
+
+    private void VerifyValues(@NonNull ContentValues contentValues) {
         final String name = contentValues.getAsString(PetsContract.PetsEntry.COLUMN_PET_NAME);
-        if ( (name == null) || (name.isEmpty())) {
+        if ((name == null) || (name.isEmpty())) {
             throw new IllegalArgumentException("Pet requires a name");
         }
         final int weigth = contentValues.getAsInteger(PetsContract.PetsEntry.COLUMN_PET_WEIGTH);
@@ -96,7 +97,18 @@ public class PetProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
+        final int match = sUriMatcher.match(uri);
+        int idUpdated;
+        if (match == PET_ID) {
+            VerifyValues(contentValues);
+            SQLiteDatabase database = mDbHelper.getWritableDatabase();
+            selection = PetsContract.PetsEntry._ID + "=?";
+            selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+            idUpdated = database.update(PetsContract.PetsEntry.TABLE_NAME, contentValues, selection, selectionArgs);
+        } else {
+            throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
+        return idUpdated;
     }
 }
