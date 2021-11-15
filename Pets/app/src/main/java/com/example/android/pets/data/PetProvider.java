@@ -73,9 +73,21 @@ public class PetProvider extends ContentProvider {
     }
 
     private Uri InsertPet(ContentValues contentValues, Uri uri) {
+        VerifyValues(contentValues);
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
         long newId = database.insert(PetsContract.PetsEntry.TABLE_NAME, null, contentValues);
         return ContentUris.withAppendedId(uri, newId);
+    }
+
+    private void VerifyValues(ContentValues contentValues) {
+        final String name = contentValues.getAsString(PetsContract.PetsEntry.COLUMN_PET_NAME);
+        if ( (name == null) || (name.isEmpty())) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+        final int weigth = contentValues.getAsInteger(PetsContract.PetsEntry.COLUMN_PET_WEIGTH);
+        if (weigth <= 0) {
+            throw new IllegalArgumentException("Invalid weigth");
+        }
     }
 
     @Override

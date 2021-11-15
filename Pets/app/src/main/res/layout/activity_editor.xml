@@ -77,10 +77,11 @@
             <!-- Gender drop-down spinner -->
             <Spinner
                 android:id="@+id/spinner_gender"
-                android:layout_height="48dp"
                 android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:addStatesFromChildren="false"
                 android:paddingRight="16dp"
-                android:spinnerMode="dropdown"/>
+                android:spinnerMode="dropdown" />
         </LinearLayout>
     </LinearLayout>
 
@@ -106,9 +107,10 @@
             <!-- Weight field -->
             <EditText
                 android:id="@+id/edit_pet_weight"
+                style="@style/EditorFieldStyle"
                 android:hint="@string/hint_pet_weight"
                 android:inputType="number"
-                style="@style/EditorFieldStyle" />
+                android:text="0" />
 
             <!-- Units for weight (kg) -->
             <TextView
