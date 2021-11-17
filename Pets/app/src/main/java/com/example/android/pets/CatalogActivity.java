@@ -12,10 +12,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.pets.data.PetsContract;
+
+import java.util.List;
 
 /**
  * Displays list of pets that were entered and stored in the app.
@@ -52,27 +55,17 @@ public class CatalogActivity extends AppCompatActivity {
                 PetsContract.PetsEntry.COLUMN_PET_GENDER,
         };
 
-        try (Cursor cursor = getContentResolver().query(
+        Cursor cursor = getContentResolver().query(
                 PetsContract.PetsUri.CONTENT_URI,
                 projection,
                 null,
                 null,
                 null
-        )) {
-            TextView displayView = (TextView) findViewById(R.id.text_view_pet);
-            if (cursor != null) {
-                displayView.setText("Pets cadastrados: " + cursor.getCount());
-                StringBuilder colunasDoArray = new StringBuilder();
-                for (String val : projection) {
-                    colunasDoArray.append(val).append(" - ");
-                }
-                displayView.append("\n" + colunasDoArray);
-                while (cursor.moveToNext()) {
-                    displayView.append(("\n" + getCursorString(cursor)));
-                }
-            } else {
-                displayView.setText("Nenhum pet cadastrado");
-            }
+        );
+        ListView displayView = (ListView) findViewById(R.id.list);
+        if (cursor != null) {
+            PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
+            displayView.setAdapter(adapter);
         }
     }
 
