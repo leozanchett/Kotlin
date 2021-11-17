@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,10 +63,12 @@ public class CatalogActivity extends AppCompatActivity {
                 null,
                 null
         );
-        ListView displayView = (ListView) findViewById(R.id.list);
+        ListView petListView = (ListView) findViewById(R.id.list);
         if (cursor != null) {
             PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
-            displayView.setAdapter(adapter);
+            petListView.setAdapter(adapter);
+            View emptyView = findViewById(R.id.empty_view);
+            petListView.setEmptyView(emptyView);
         }
     }
 
