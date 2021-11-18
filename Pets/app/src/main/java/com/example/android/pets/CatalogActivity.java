@@ -1,9 +1,12 @@
 package com.example.android.pets;
 
 import android.annotation.SuppressLint;
+import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,8 +27,10 @@ import java.util.List;
 /**
  * Displays list of pets that were entered and stored in the app.
  */
-public class CatalogActivity extends AppCompatActivity {
+public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private PetCursorAdapter adapter;
+    private static final int PET_LOADER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,40 +42,15 @@ public class CatalogActivity extends AppCompatActivity {
             Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
             startActivity(intent);
         });
-
-        displayDatabaseInfo();
-    }
-
-    /**
-     * Temporary helper method to display information in the onscreen TextView about the state of
-     * the pets database.
-     */
-    @SuppressLint("SetTextI18n")
-    private void displayDatabaseInfo() {
-
-        String[] projection = new String[]{
-                PetsContract.PetsEntry._ID,
-                PetsContract.PetsEntry.COLUMN_PET_NAME,
-                PetsContract.PetsEntry.COLUMN_PET_BREED,
-                PetsContract.PetsEntry.COLUMN_PET_WEIGTH,
-                PetsContract.PetsEntry.COLUMN_PET_GENDER,
-        };
-
-        Cursor cursor = getContentResolver().query(
-                PetsContract.PetsUri.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null
-        );
         ListView petListView = (ListView) findViewById(R.id.list);
-        if (cursor != null) {
-            PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
-            petListView.setAdapter(adapter);
-            View emptyView = findViewById(R.id.empty_view);
-            petListView.setEmptyView(emptyView);
-        }
+        View emptyView = findViewById(R.id.empty_view);
+        petListView.setEmptyView(emptyView);
+        adapter = new PetCursorAdapter(this, null);
+        petListView.setAdapter(adapter);
+
+        getLoaderManager().initLoader(PET_LOADER, null, this);
     }
+
 
     private String getCursorString(@NonNull Cursor cursor) {
         return cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry._ID)) + "    " +
@@ -79,13 +59,6 @@ public class CatalogActivity extends AppCompatActivity {
                 cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_WEIGTH)) + "    " +
                 cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_GENDER));
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        displayDatabaseInfo();
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -102,12 +75,10 @@ public class CatalogActivity extends AppCompatActivity {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
                 insertPet();
-                displayDatabaseInfo();
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
                 getContentResolver().delete(PetsContract.PetsUri.CONTENT_URI, null, null);
-                displayDatabaseInfo();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -127,5 +98,34 @@ public class CatalogActivity extends AppCompatActivity {
             Toast.makeText(this, "Houve um problema no cadastro do pet default", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        String[] projection = new String[]{
+                PetsContract.PetsEntry._ID,
+                PetsContract.PetsEntry.COLUMN_PET_NAME,
+                PetsContract.PetsEntry.COLUMN_PET_BREED,
+                PetsContract.PetsEntry.COLUMN_PET_WEIGTH,
+                PetsContract.PetsEntry.COLUMN_PET_GENDER,
+        };
+        return new CursorLoader(
+                this,
+                PetsContract.PetsUri.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null
+                );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        adapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
     }
 }
