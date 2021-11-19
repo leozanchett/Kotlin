@@ -17,15 +17,18 @@ package com.example.android.pets;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,6 +51,12 @@ public class EditorActivity extends AppCompatActivity {
     private Spinner mGenderSpinner;
     private int mGender = 0;
     private Uri currentPetUri;
+    private boolean mPetHasChanged = false;
+
+    private View.OnTouchListener mTouchListener = (view, motionEvent) -> {
+        mPetHasChanged = true;
+        return false;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +68,16 @@ public class EditorActivity extends AppCompatActivity {
         mWeightEditText = (EditText) findViewById(R.id.edit_pet_weight);
         mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
         setupSpinner();
+        mNameEditText.setOnTouchListener(mTouchListener);
+        mBreedEditText.setOnTouchListener(mTouchListener);
+        mWeightEditText.setOnTouchListener(mTouchListener);
+        mGenderSpinner.setOnTouchListener(mTouchListener);
 
         Intent intent = getIntent();
         currentPetUri = intent.getData();
         if (currentPetUri == null) {
             setTitle(getString(R.string.editor_activity_title_new_pet));
+            invalidateOptionsMenu();
         } else {
             setTitle(getString(R.string.editor_activity_title_edit_pet));
             final String selection = PetsEntry._ID + " = ?";
@@ -88,6 +102,7 @@ public class EditorActivity extends AppCompatActivity {
         }
 
     }
+
 
     /**
      * Setup the dropdown spinner that allows the user to select the gender of the pet.
@@ -201,6 +216,60 @@ public class EditorActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Houve um problema" + msg + mNameEditText.getText().toString().trim(), Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void showUnsavedChangesDialog(
+            DialogInterface.OnClickListener discardButtonClickListener) {
+        // Cria um AlertDialog.Builder e configura a mensagem e click listeners
+        // para os botões positivos e negativos do dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.unsaved_changes_dialog_msg);
+        builder.setPositiveButton(R.string.discard, discardButtonClickListener);
+        builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // O usuário clicou no botão "Continuar editando", então, feche a caixa de diálogo
+                // e continue editando o pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Cria e mostra o AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Se o pet não mudou, continue lidando com clique do botão "back"
+        if (!mPetHasChanged) {
+            super.onBackPressed();
+            return;
+        }
+        // Caso contrário, se houver alterações não salvas, configure uma caixa de diálogo para alertar o usuário.
+        // Crie um click listener para lidar com o usuário, confirmando que mudanças devem ser descartadas.
+        DialogInterface.OnClickListener discardButtonClickListener =
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // User clicou no botão "Discard", fecha a activity atual.
+                        finish();
+                    }
+                };
+
+        // Mostra o diálogo que diz que há mudanças não salvas
+        showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        if (currentPetUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
+        return true;
     }
 }
