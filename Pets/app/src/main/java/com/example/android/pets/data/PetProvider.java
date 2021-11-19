@@ -52,6 +52,7 @@ public class PetProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -74,10 +75,12 @@ public class PetProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         final int match = sUriMatcher.match(uri);
         if (match == PETS) {
+            getContext().getContentResolver().notifyChange(uri, null);
             return InsertPet(contentValues, uri);
         } else {
             throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+
     }
 
     private Uri InsertPet(ContentValues contentValues, Uri uri) {
@@ -116,7 +119,7 @@ public class PetProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
-
+        getContext().getContentResolver().notifyChange(uri, null);
         return idDelete;
     }
 
@@ -133,6 +136,7 @@ public class PetProvider extends ContentProvider {
         } else {
             throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+        getContext().getContentResolver().notifyChange(uri, null);
         return idUpdated;
     }
 }
