@@ -35,6 +35,6 @@ public class PetCursorAdapter extends CursorAdapter {
         String summary = cursor.getString(cursor.getColumnIndexOrThrow(PetsContract.PetsEntry.COLUMN_PET_BREED));
         // Populate fields with extracted properties
         tvName.setText(body);
-        tvSummary.setText(summary);
+        tvSummary.setText(String.valueOf(summary));
     }
 }

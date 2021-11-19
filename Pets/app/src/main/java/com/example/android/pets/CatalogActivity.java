@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.pets.data.PetQueryes;
 import com.example.android.pets.data.PetsContract;
 
 import java.util.List;
@@ -58,15 +59,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         });
 
         getLoaderManager().initLoader(PET_LOADER, null, this);
-    }
-
-
-    private String getCursorString(@NonNull Cursor cursor) {
-        return cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry._ID)) + "    " +
-                cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_NAME)) + "    " +
-                cursor.getString(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_BREED)) + "    " +
-                cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_WEIGTH)) + "    " +
-                cursor.getInt(cursor.getColumnIndex(PetsContract.PetsEntry.COLUMN_PET_GENDER));
     }
 
     @Override
@@ -111,17 +103,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        String[] projection = new String[]{
-                PetsContract.PetsEntry._ID,
-                PetsContract.PetsEntry.COLUMN_PET_NAME,
-                PetsContract.PetsEntry.COLUMN_PET_BREED,
-                PetsContract.PetsEntry.COLUMN_PET_WEIGTH,
-                PetsContract.PetsEntry.COLUMN_PET_GENDER,
-        };
+
         return new CursorLoader(
                 this,
                 PetsContract.PetsUri.CONTENT_URI,
-                projection,
+                PetQueryes.allPetInfo(),
                 null,
                 null,
                 null
