@@ -147,7 +147,8 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
-                // Do nothing for now
+                DeletePet();
+                finish();
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
@@ -156,6 +157,15 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void DeletePet() {
+        int countExclusao = getContentResolver().delete(currentPetUri, null, null);
+        if (countExclusao > 0) {
+            Toast.makeText(this, mNameEditText.getText().toString().trim() + " excluído com sucesso", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Houve um problema na exclusão", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void UpdateOrInsert() {
