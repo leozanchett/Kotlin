@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Leo/AndroidStudioProjects/Kotlin/Trivia/app/src/main/res/layout/activity_main.xml" value="0.23369565217391305" />
+        <entry key="..\:/Users/Leo/AndroidStudioProjects/Kotlin/Trivia/app/src/main/res/layout/fragment_game_over.xml" value="0.2210144927536232" />
         <entry key="..\:/Users/Leo/AndroidStudioProjects/Kotlin/Trivia/app/src/main/res/layout/fragment_title.xml" value="0.23369565217391305" />
       </map>
     </option>
