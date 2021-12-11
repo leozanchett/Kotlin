@@ -13,8 +13,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-370" />
-                            <option name="y" value="-8" />
+                            <option name="x" value="-380" />
+                            <option name="y" value="-181" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -84,6 +84,18 @@
                               </value>
                             </entry>
                           </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="rulesFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-387" />
+                            <option name="y" value="210" />
+                          </Point>
                         </option>
                       </LayoutPositions>
                     </value>
